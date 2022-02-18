@@ -1,0 +1,132 @@
+﻿@{
+	ViewData["Title"] = "Grid Page";
+}
+
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core.Fluent;
+@model ProductPagingInfo;
+
+
+<style>
+	.arrow {
+		display: inline-block;
+		height: 16px;
+		vertical-align: middle;
+		width: 16px;
+	}
+
+	.arrow-up {
+		background-image: url('/images/arrow-up.png')
+	}
+
+	.arrow-down {
+		background-image: url('/images/arrow-down.png')
+	}
+
+
+
+	.pagination-container {
+		display: inline-block;
+	}
+
+	.pagination-container a {
+		color: black;
+		float: left;
+		padding: 8px 16px;
+		text-decoration: none;
+		transition: background-color .3s;
+		border: 1px solid #ddd;
+	}
+
+	.pagination-container .active {
+		color: black;
+		float: left;
+		padding: 8px 16px;
+		text-decoration: none;
+		transition: background-color .3s;
+		background-color:green;
+		color:whitesmoke;
+		border: 1px solid #ddd;
+	}
+
+	.pagination-container a:hover:not(.active) {
+		background-color: #ddd;
+	}
+</style>
+
+<div>
+	@using (Html.BeginForm("Index", "Demo", FormMethod.Get, new { @Id = "frmSearch" }))
+	{
+		<div class="row">
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				@Html.TextBoxFor(m => m.Search, new {@class = "form-control"})
+			</div>
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				<input id="btnSubmit" class="btn btn-success" type="Submit" value="Search" />
+				<input id="btnClear" class="btn btn-success" type="Submit" value="Clear" />
+			</div>
+			<div class="col-md-4 col-sm-4 col-xs-12">
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12" style="margin-top:25px">
+				<table class="table table-striped">
+					<thead>
+						<tr sortby="@Model.SortBy" pageSize="@Model.PageSize" isAsc="@Model.IsAsc" search="@Model.Search">
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var product in Model.Products)
+						{
+							<tr>
+								<td>
+									@product.ProductId
+								</td>
+								<td>
+									@product.Name
+								</td>
+								<td>
+									@product.Price
+								</td>
+							</tr>
+						}
+						<tr>
+							<td colspan="3">
+								@Html.PagedListPager((IPagedList)Model.Products,page => Url.Action("Index", new {
+							page = page,
+							sortBy = Model.SortBy,
+							search = Model.Search
+							}),
+							X.PagedList.Web.Common.PagedListRenderOptions.OnlyShowFivePagesAtATime)
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		
+	}
+</div>
+
+<script type="text/javascript">
+	$(document).ready(() => {
+		$('#btnClear').click(() => {
+			window.location.href = window.location.href.split("?")[0];
+		});
+		$('#Search').blur(() => {
+			let value = $('#Search').val();
+			value.trim();
+			$('#Search').val(value);
+		});
+	});
+</script>
+
+
+
+
+
+
+
